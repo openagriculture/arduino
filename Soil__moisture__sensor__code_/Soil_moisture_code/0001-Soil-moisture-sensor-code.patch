@@ -1,0 +1,44 @@
+From e28c6ff46fa688000b03dc7ee52c2365303a007a Mon Sep 17 00:00:00 2001
+From: Duryodhan Aldar <durva.ges@gmail.com>
+Date: Tue, 11 Mar 2014 12:52:46 +0530
+Subject: [PATCH] Soil moisture sensor code
+
+---
+ .../Soil_moisture_code/Soil_moisture_code.ino      | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Soil__moisture__sensor__code_/Soil_moisture_code/Soil_moisture_code.ino
+
+diff --git a/Soil__moisture__sensor__code_/Soil_moisture_code/Soil_moisture_code.ino b/Soil__moisture__sensor__code_/Soil_moisture_code/Soil_moisture_code.ino
+new file mode 100644
+index 0000000..58a098f
+--- /dev/null
++++ b/Soil__moisture__sensor__code_/Soil_moisture_code/Soil_moisture_code.ino
+@@ -0,0 +1,25 @@
++int moistureSensor = 0;
++int moisture_val;
++void setup() {
++Serial.begin(9600); //open serial port
++pinMode (11, OUTPUT);
++}
++
++void loop() {
++
++moisture_val = analogRead(moistureSensor); // read the value from the moisture sensor
++Serial.print("moisture sensor reads ");
++Serial.println( moisture_val );
++if (moisture_val < 500)
++{
++Serial.println("turning on LED ");
++digitalWrite (11, HIGH);           // digitalWrite 11 pin high then LED on  
++delay(2000);
++}
++if (moisture_val > 500)
++{
++Serial.println("turning off LED");
++digitalWrite (11, LOW);          // digitalWrite 11 pin low then LED off 
++delay(2000);
++}
++}
+-- 
+1.8.1.2
+
