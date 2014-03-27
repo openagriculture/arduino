@@ -68,7 +68,7 @@ void loop() {
                 buttonClicked(BTN_1);
                 }
 
-               if(digitalRead(BTN_1) == 1)
+               if(digitalRead(BTN_2) == 1)
                {
                 buttonClicked(BTN_2);
                }
