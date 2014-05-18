@@ -36,12 +36,17 @@ void print_welcome() {
 void print_temp() {
 	lcd.clear();
 
+	char temp_char[6]; // buffer for temp incl. decimal point & possible minus sign
+
 	int tempReading = analogRead(temp_in); /* Read analog temp. sensor data */
 	float temp_float =  ((5.0 * tempReading * 100.0)/1024.0); /* Convert to deg cen. */
-	lcd.print ("Temp = ");
-	lcd.setCursor(5, 0);
-	lcd.print(temp_float);
-//	lcd.setCursor(0,1);
+	
+	dtostrf(temp_float, 6, 2, temp_char); /* Convert Float to String */
+
+	strcpy(display_row1,  "Temp.=");
+	strcat(display_row1, temp_char);
+	strcat(display_row1,  " deg");
+	lcd.print(display_row1);
 //	lcd.print(display_blankrow);
 	delay(1000); /* wait for 1000ms = 1 Sec */
 }
