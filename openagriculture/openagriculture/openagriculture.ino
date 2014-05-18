@@ -9,8 +9,8 @@ char display_blankrow[16] = "               ";
 
 int analog_in_pin[] = {0, 1, 2, 3, 4, 5}; /* define analog pins */
 
-int temp_in = analog_in_pin[0];                                                  // temp sensor pin connected arduino
-
+int temp_in = analog_in_pin[0]; /* temp sensor pin connected arduino */
+int light_in = analog_in_pin[1]; /* light sensor pin */
 
 void print_welcome(); /* Print welcome message at power ON */
 void print_temp();
@@ -21,8 +21,7 @@ void setup() {
 }
 
 void loop() {
-//	printMenu();
-	print_temp(); 
+	printMenu();
 }     
              
 void print_welcome() {
@@ -34,8 +33,6 @@ void print_welcome() {
 }
 
 void print_temp() {
-	lcd.clear();
-
 	char temp_char[6]; // buffer for temp incl. decimal point & possible minus sign
 
 	int tempReading = analogRead(temp_in); /* Read analog temp. sensor data */
@@ -47,9 +44,22 @@ void print_temp() {
 	strcat(display_row1, temp_char);
 	strcat(display_row1,  " deg");
 	lcd.print(display_row1);
-//	lcd.print(display_blankrow);
-	delay(1000); /* wait for 1000ms = 1 Sec */
+}
+
+void print_light() {
+	char cstr[5];
+	int lightReading = analogRead(light_in);
+	String lightString = String(lightReading);
+	lightString.toCharArray(cstr,5);
+	strcpy(display_row2, "Light.= ");
+	strcat(display_row2, cstr); 
+	lcd.print(display_row2);
 }
 
 void printMenu() {
+	lcd.clear();
+	print_temp(); /* Print temp on first row */
+	lcd.setCursor(0,1);
+	print_light(); /* Print light value on second row */
+	delay(1000); /* wait for 1000ms = 1 Sec */
 }
