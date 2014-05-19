@@ -12,24 +12,58 @@ int analog_in_pin[] = {0, 1, 2, 3, 4, 5}; /* define analog pins */
 int temp_in = analog_in_pin[0]; /* temp sensor pin connected arduino */
 int light_in = analog_in_pin[1]; /* light sensor pin */
 
+const int digital_in_pin[] = {8, 11};
+const int setting_mode_key = digital_in_pin[0]; /* User setting key */
+
+int key_state = 0;
+
 void print_welcome(); /* Print welcome message at power ON */
 void print_temp();
+void print_on_display();
  
-void setup() {                  
+void init_pins() {
+	pinMode(setting_mode_key,INPUT); /* input pinmode for setting mode key */
+}
+
+/* User setting mode, will be enabled only when user
+   presses key, while power ON 
+*/
+
+void setting_mode() {
+	lcd.clear();
+	strcpy(display_row1,  "   ENTERING    ");
+	strcpy(display_row2,  " SETTING MODE  ");
+	print_on_display();
+}
+
+void setup() {
+	init_pins();                  
 	lcd.begin(16,2); /* 16x2 lcd */
 	print_welcome(); /* Print Welcome message while booting */
+	
+	/* Check if we need to go to setting mode while power on
+	   Key pressed */
+	if ((key_state = digitalRead(setting_mode_key)) == HIGH)
+		setting_mode();
 }
 
 void loop() {
 	printMenu();
 }     
-             
-void print_welcome() {
+
+/* ################# ALL Display Print Code #####################
+##############################################################
+*/
+void print_on_display() {
 	lcd.clear(); /* clear lcd */
 	lcd.print(display_row1);
 	lcd.setCursor(0,1);
 	lcd.print(display_row2);
 	delay(1000); /* wait for 1000ms = 1 Sec */
+}
+             
+void print_welcome() {
+	print_on_display();
 }
 
 void print_temp() {
@@ -63,3 +97,5 @@ void printMenu() {
 	print_light(); /* Print light value on second row */
 	delay(1000); /* wait for 1000ms = 1 Sec */
 }
+
+/* ############################################################### */
