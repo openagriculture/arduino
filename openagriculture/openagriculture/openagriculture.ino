@@ -34,6 +34,18 @@ void setting_mode() {
 	strcpy(display_row1,  "   ENTERING    ");
 	strcpy(display_row2,  " SETTING MODE  ");
 	print_on_display();
+
+	delay(500); /* wait for showing next screen */
+	/* Implement a mechanism to change threadshould value */
+	
+//	read_temp_threadshold();
+//	read_light_threadshold();
+
+	strcpy(display_row1,  "TEMP Thr.      ");
+	strcpy(display_row2,  "LIGHT Thr.     ");
+	print_on_display();
+
+	delay(5000); /* wait before coming out of settings mode */
 }
 
 void setup() {
@@ -66,12 +78,16 @@ void print_welcome() {
 	print_on_display();
 }
 
+float read_temp() {
+	int tempReading = analogRead(temp_in); /* Read analog temp. sensor data */
+	float temp_deg =  ((5.0 * tempReading * 100.0)/1024.0); /* Convert to deg cen. */
+	return temp_deg;
+}
+
 void print_temp() {
 	char temp_char[6]; // buffer for temp incl. decimal point & possible minus sign
-
-	int tempReading = analogRead(temp_in); /* Read analog temp. sensor data */
-	float temp_float =  ((5.0 * tempReading * 100.0)/1024.0); /* Convert to deg cen. */
 	
+	float temp_float = read_temp();
 	dtostrf(temp_float, 6, 2, temp_char); /* Convert Float to String */
 
 	strcpy(display_row1,  "Temp.=");
@@ -80,9 +96,14 @@ void print_temp() {
 	lcd.print(display_row1);
 }
 
+int read_light() {
+	int light_sensor_reading = analogRead(light_in);
+	return (light_sensor_reading);
+}
+
 void print_light() {
 	char cstr[5];
-	int lightReading = analogRead(light_in);
+	int lightReading = read_light();
 	String lightString = String(lightReading);
 	lightString.toCharArray(cstr,5);
 	strcpy(display_row2, "Light.= ");
