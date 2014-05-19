@@ -15,7 +15,14 @@ int light_in = analog_in_pin[1]; /* light sensor pin */
 const int digital_in_pin[] = {8, 11};
 const int setting_mode_key = digital_in_pin[0]; /* User setting key */
 
+/* Global array for int to string */
+char cstr[5];
+
 int key_state = 0;
+
+/* Eeprom address */
+int temp_thrld_addr = 0x01;
+int light_thrld_addr = 0x02;
 
 void print_welcome(); /* Print welcome message at power ON */
 void print_temp();
@@ -37,15 +44,39 @@ void setting_mode() {
 
 	delay(500); /* wait for showing next screen */
 	/* Implement a mechanism to change threadshould value */
-	
-//	read_temp_threadshold();
-//	read_light_threadshold();
 
-	strcpy(display_row1,  "TEMP Thr.      ");
-	strcpy(display_row2,  "LIGHT Thr.     ");
+	/* do factory reset */
+	reset_values();
+	
+	read_temp_threadshold();
+	read_light_threadshold();
+
 	print_on_display();
 
 	delay(5000); /* wait before coming out of settings mode */
+}
+
+float read_temp_threadshold() {
+        char *t_str;
+	int temp_thrld = EEPROM.read(temp_thrld_addr);     /* threadshouldtemp read in EEPROM */
+	t_str = int_to_string(temp_thrld);
+        strcpy(display_row1,  "TEMP Thr.= ");
+	strcat(display_row1, t_str);
+}
+
+int read_light_threadshold() {
+        char *t_str;
+        int light_thrld = EEPROM.read(light_thrld_addr);     /* threadshould light sensor value */
+	t_str = int_to_string(light_thrld);
+        strcpy(display_row2,  "LIGHT Thr.= ");
+	strcat(display_row2, t_str);
+}
+
+/* Use this function to do factory reset 
+   to default valuses */
+void reset_values() {
+        EEPROM.write(temp_thrld_addr, 30); /* default reset temp to 30 deg */
+        EEPROM.write(light_thrld_addr, 140); /* default reset light to 140 */
 }
 
 void setup() {
@@ -101,13 +132,18 @@ int read_light() {
 	return (light_sensor_reading);
 }
 
+char *int_to_string(int val) {
+	String str = String(val);
+	str.toCharArray(cstr,5);
+	return cstr;
+}
+
 void print_light() {
-	char cstr[5];
+	char *t_str;
 	int lightReading = read_light();
-	String lightString = String(lightReading);
-	lightString.toCharArray(cstr,5);
+	t_str = int_to_string(lightReading);	
 	strcpy(display_row2, "Light.= ");
-	strcat(display_row2, cstr); 
+	strcat(display_row2, t_str); 
 	lcd.print(display_row2);
 }
 
@@ -119,4 +155,5 @@ void printMenu() {
 	delay(1000); /* wait for 1000ms = 1 Sec */
 }
 
-/* ############################################################### */
+/* ############################################################### 
+*/
