@@ -32,6 +32,10 @@ void init_pins() {
 	pinMode(setting_mode_key,INPUT); /* input pinmode for setting mode key */
 }
 
+
+/* ################ User Setting Mode #################### 
+*/
+
 /* User setting mode, will be enabled only when user
    presses key, while power ON 
 */
@@ -48,28 +52,56 @@ void setting_mode() {
 	/* do factory reset */
 	reset_values();
 	
-	read_temp_threadshold();
-	read_light_threadshold();
-
+	int temp_thr = read_temp_thr();
+	print_temp_thr(temp_thr);
+	int light_thr = read_light_thr();
+	print_light_thr(light_thr);
 	print_on_display();
+	delay(5000); /* delay for testing, deleme*/
 
-	delay(5000); /* wait before coming out of settings mode */
+	/* Implement the logic to change the thr values
+	   as per user Input
+	*/
+	change_temp_threshold();
+	change_light_threshold();
+	
+	/* just to verify/test deleme after proper thr change logic*/
+	temp_thr = read_temp_thr();
+	print_temp_thr(temp_thr);
+	light_thr = read_light_thr();
+	print_light_thr(light_thr);
+	print_on_display();
+	delay(5000); /* delay for testing, deleme*/
 }
 
-float read_temp_threadshold() {
+void print_temp_thr(int temp_thr) {
         char *t_str;
-	int temp_thrld = EEPROM.read(temp_thrld_addr);     /* threadshouldtemp read in EEPROM */
-	t_str = int_to_string(temp_thrld);
+	t_str = int_to_string(temp_thr);
         strcpy(display_row1,  "TEMP Thr.= ");
 	strcat(display_row1, t_str);
 }
 
-int read_light_threadshold() {
+int read_temp_thr() {
+	return (EEPROM.read(temp_thrld_addr));     /* threadshouldtemp read in EEPROM */
+}
+
+void print_light_thr(int light_thr) {
         char *t_str;
-        int light_thrld = EEPROM.read(light_thrld_addr);     /* threadshould light sensor value */
-	t_str = int_to_string(light_thrld);
+	t_str = int_to_string(light_thr);
         strcpy(display_row2,  "LIGHT Thr.= ");
 	strcat(display_row2, t_str);
+}
+
+int read_light_thr() {
+	return (EEPROM.read(light_thrld_addr));     /* threadshouldtemp read in EEPROM */
+}
+
+void change_temp_threshold() {
+        EEPROM.write(temp_thrld_addr, 60); /* logic to change temp thr */
+}
+
+void change_light_threshold() {
+        EEPROM.write(light_thrld_addr, 180); /* logic to change light thr */
 }
 
 /* Use this function to do factory reset 
